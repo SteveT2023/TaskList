@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
 
 class Task {
   String taskName;
-  bool isCompleted;
+  bool taskCompleted;
 
-  Task(this.taskName, {this.isCompleted = false});
+  Task(this.taskName, {this.taskCompleted = false});
 }
 
 class TaskListScreen extends StatefulWidget {
@@ -31,6 +31,7 @@ class TaskListScreen extends StatefulWidget {
 
 class _TaskListScreenState extends State<TaskListScreen> {
   final List<Task> _tasks = [];
+  final TextEditingController _taskController = TextEditingController();
 
   void _addTask(String taskName) {
     setState(() {
@@ -40,7 +41,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   void _taskCompletion(int index) {
     setState(() {
-      _tasks[index].isCompleted = !_tasks[index].isCompleted;
+      _tasks[index].taskCompleted = !_tasks[index].taskCompleted;
     });
   }
 
@@ -48,6 +49,37 @@ class _TaskListScreenState extends State<TaskListScreen> {
     setState(() {
       _tasks.removeAt(index);
     });
+  }
+
+  void _userAddTask() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Enter your task.'),
+          content: TextField(
+            controller: _taskController,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                _addTask(_taskController.text);
+                _taskController.clear();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Add'),
+            ),
+            TextButton(
+              onPressed: () {
+                _taskController.clear();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      }
+    );
   }
 
   @override
@@ -67,7 +99,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               task.taskName
             ),
             leading: Checkbox(
-              value: task.isCompleted,
+              value: task.taskCompleted,
               onChanged: (value) {_taskCompletion(index);}
             ),
             trailing: IconButton(
@@ -78,7 +110,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {_addTask('New Task');},
+        onPressed: _userAddTask,
         child: const Icon(Icons.add),
       ),
     );
