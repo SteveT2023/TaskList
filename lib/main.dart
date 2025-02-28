@@ -52,6 +52,35 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Task List'),
+        centerTitle: true,
+        backgroundColor: Colors.orangeAccent,
+      ),
+      body: ListView.builder(
+        itemCount: _tasks.length,
+        itemBuilder: (context, index) {
+          final task = _tasks[index];
+          return ListTile (
+            title: Text(
+              task.taskName
+            ),
+            leading: Checkbox(
+              value: task.isCompleted,
+              onChanged: (value) {_taskCompletion(index);}
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () {_removeTask(index);},
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {_addTask('New Task');},
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }
